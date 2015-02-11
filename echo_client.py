@@ -1,5 +1,6 @@
 import socket
 import sys
+buffersize = 8
 
 
 def start_client(message=""):
@@ -9,9 +10,8 @@ def start_client(message=""):
         socket.IPPROTO_IP
         )
     client_socket.connect(('127.0.0.1', 50000))
-    client_socket.sendall(message)
+    client_socket.sendall(message.encode('utf-8'))
     client_socket.shutdown(socket.SHUT_WR)
-    buffersize = 32
     response = ''
     done = False
     while not done:

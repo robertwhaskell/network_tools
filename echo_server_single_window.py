@@ -1,5 +1,7 @@
 import socket
-
+import thread
+import echo_client
+import time
 buffersize = 8
 
 
@@ -13,6 +15,9 @@ def start_server():
     server_socket.listen(1)
     try:
         while True:
+            time.sleep(1)
+            msg = raw_input("Enter statement to echo: ")
+            thread.start_new_thread(wait_then_start_client, (msg,))
             conn, addr = server_socket.accept()
             done = False
             message = ""
@@ -28,5 +33,9 @@ def start_server():
         return "\nclosed server socket"
 
 
+def wait_then_start_client(msg):
+    print echo_client.start_client(msg)
+
+
 if __name__ == '__main__':
-    print start_server()
+    start_server()
