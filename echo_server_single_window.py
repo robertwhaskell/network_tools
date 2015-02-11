@@ -30,7 +30,9 @@ def start_server():
             conn.close()
     except:
         server_socket.close()
-        return "\nclosed server socket"
+        print "\nclosed server socket"
+    finally:
+        raise
 
 
 def wait_then_start_client(msg):

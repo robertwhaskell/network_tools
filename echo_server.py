@@ -25,8 +25,9 @@ def start_server():
             conn.close()
     except:
         server_socket.close()
-        return "\nclosed server socket"
-
+        print "\nclosed server socket"
+    finally:
+        raise
 
 if __name__ == '__main__':
     print start_server()
