@@ -9,7 +9,7 @@ def start_server():
         socket.SOCK_STREAM,
         socket.IPPROTO_IP
         )
-    server_socket.bind(('127.0.0.1', 50000))
+    server_socket.bind(('127.0.0.1', 50001))
     server_socket.listen(1)
     try:
         while True:
@@ -31,12 +31,17 @@ def start_server():
 
 
 def response_ok(uri):
-
-    pass
+    okay_response = "HTTP/1.1 200 OK\r\n"
+    headers = "Content-Type: text/plain\r\n"
+    body = "you requested: {}".format(uri)
+    return "{}{}{}\r\n".format(okay_response, headers, body)
 
 
 def response_error(error_num, error_msg):
-    pass
+    error_response = "HTTP/1.1 {} ERROR\r\n".format(error_num)
+    headers = "Content-Type: text/plain\r\n"
+    body = "ERROR {}, {}\r\n".format(error_num, error_msg)
+    return "{}{}{}".format(error_response, headers, body)
 
 
 def parse_request(request):

@@ -9,7 +9,7 @@ def start_client(message=""):
         socket.SOCK_STREAM,
         socket.IPPROTO_IP
         )
-    client_socket.connect(('127.0.0.1', 50000))
+    client_socket.connect(('127.0.0.1', 50001))
     client_socket.sendall(message.encode('utf-8'))
     client_socket.shutdown(socket.SHUT_WR)
     response = ''
