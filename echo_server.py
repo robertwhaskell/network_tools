@@ -21,7 +21,11 @@ def start_server():
                 message = "{}{}".format(message, msg_part)
                 if len(msg_part) < buffersize:
                     done = True
-            conn.sendall("Received message: {0}".format(message))
+            response = parse_request(message)
+            try:
+                conn.sendall(response)
+            except TypeError:
+                conn.sendall(response_error('400', 'BAD REQUEST'))
             conn.close()
     except:
         server_socket.close()
@@ -46,20 +50,21 @@ def response_error(error_num, error_msg):
 
 def parse_request(request):
     request_list = request.split()
-    if check_for_errors(request_list) == "Good to go!":
-        response_ok(request_list[1])
+    print len(request_list)
+    if len(request_list) != 5:
+        return None
+    error_check = check_for_errors(request_list)
+    if error_check == "Good to go!":
+        return response_ok(request_list[1])
+    return error_check
 
 
 def check_for_errors(request):
     if request[0] != 'GET':
-        response_error('405', '{} METHOD NOT ALLOWED'.format(request[0]))
-        return
+        return response_error('405', '{} METHOD NOT ALLOWED'.format(request[0]))
     if request[2] != 'HTTP/1.1':
-        response_error('505', '{} NOT SUPPORTED'.format(request[2]))
-        return
+        return response_error('505', '{} NOT SUPPORTED'.format(request[2]))
     return "Good to go!"
-    # if errors exist, call response_error.
-    # otherwise, return true
 
 
 if __name__ == '__main__':
