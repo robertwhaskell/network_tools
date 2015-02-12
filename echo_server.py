@@ -1,4 +1,7 @@
 import socket
+import webroot
+import os
+import mimetypes
 
 buffersize = 8
 
@@ -34,10 +37,10 @@ def start_server():
         raise
 
 
-def response_ok(uri):
+def response_ok(uri, body_and_type):
     okay_response = "HTTP/1.1 200 OK\r\n"
-    headers = "Content-Type: text/plain\r\n"
-    body = "you requested: {}".format(uri)
+    headers = "Content-Type: {}\r\n".format(body_and_type[1])
+    body = "you requested: {}".format(body_and_type[0])
     return "{}{}{}\r\n".format(okay_response, headers, body)
 
 
@@ -55,7 +58,8 @@ def parse_request(request):
         return None
     error_check = check_for_errors(request_list)
     if error_check == "Good to go!":
-        return response_ok(request_list[1])
+        body_and_type = resolve_uri(request_list[1])
+        return response_ok(request_list[1], body_and_type)
     return error_check
 
 
@@ -66,6 +70,26 @@ def check_for_errors(request):
         return response_error('505', '{} NOT SUPPORTED'.format(request[2]))
     return "Good to go!"
 
+
+def resolve_uri(uri):
+    if os.path.isdir(uri):
+        return (generate_dir_html(uri), 'text/html')
+    return (read_file_data(uri), mimetypes(uri))
+
+
+def read_file_data(uri):
+    with open(os.path(uri), 'r') as f:
+        read_data = f.read()
+    return read_data
+
+
+def generate_dir_html(uri):
+    dirname = "<h1>{}</h1>".format(uri)
+    items_in_dir = "<ul>"
+    for item in os.listdir(uri):
+        items_in_dir = "{}<li>{}</li>".format(items_in_dir, item)
+    items_in_dir = "{}</ul>"
+    return "{}{}".format(dirname, items_in_dir)
 
 if __name__ == '__main__':
     print start_server()

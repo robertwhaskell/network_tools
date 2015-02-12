@@ -54,7 +54,7 @@ def test_HTTP_has_root():
     body = """
     <h1>webroot</h1>
     <ul>
-        <li><b>images</b></li>
+        <li>images</li>
         <li>a_web_page.html</li>
         <li>sample.txt</li>
     </ul>
