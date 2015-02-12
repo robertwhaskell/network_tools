@@ -14,13 +14,10 @@ def test_HTTP_bad_response_error():
 
 def test_HTTP_okay():
     msg = echo_client.start_client("""
-            GET /fake/uri HTTP/1.1\r\nHost: localhost:50001\r\n
+            GET webroot HTTP/1.1\r\nHost: localhost:50001\r\n
             """)
     okay_response = "HTTP/1.1 200 OK\r\n"
-    headers = "Content-Type: text/plain\r\n"
-    body = "you requested: /fake/uri"
-    response = "{}{}{}\r\n".format(okay_response, headers, body)
-    assert msg == response
+    assert okay_response in msg
 
 
 def test_HTTP_method_error():
@@ -36,7 +33,7 @@ def test_HTTP_method_error():
 
 def test_HTTP_version_error():
     msg = echo_client.start_client("""
-            GET /path/to/index.html HTTP/1.0\r\nHost: localhost:50001\r\n
+            GET webroot HTTP/1.0\r\nHost: localhost:50001\r\n
             """)
     error_response = "HTTP/1.1 505 ERROR\r\n"
     headers = "Content-Type: text/plain\r\n"
@@ -47,7 +44,7 @@ def test_HTTP_version_error():
 
 def test_HTTP_has_root():
     msg = echo_client.start_client("""
-            GET webroot HTTP/1.0\r\nHost: localhost:50001\r\n
+            GET webroot HTTP/1.1\r\nHost: localhost:50001\r\n
             """)
     okay_response = "HTTP/1.1 200 OK\r\n"
     headers = "Content-Type: text/html\r\n"
