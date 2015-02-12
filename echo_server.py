@@ -29,5 +29,33 @@ def start_server():
     finally:
         raise
 
+
+def response_ok(uri):
+
+    pass
+
+
+def response_error(error_num, error_msg):
+    pass
+
+
+def parse_request(request):
+    request_list = request.split()
+    if check_for_errors(request_list) == "Good to go!":
+        response_ok(request_list[1])
+
+
+def check_for_errors(request):
+    if request[0] != 'GET':
+        response_error('405', '{} METHOD NOT ALLOWED'.format(request[0]))
+        return
+    if request[2] != 'HTTP/1.1':
+        response_error('505', '{} NOT SUPPORTED'.format(request[2]))
+        return
+    return "Good to go!"
+    # if errors exist, call response_error.
+    # otherwise, return true
+
+
 if __name__ == '__main__':
     print start_server()
