@@ -1,6 +1,13 @@
 import echo_client
 import os
 
+
+def read_file_data(uri):
+    with open(os.path(uri), 'r') as f:
+        read_data = f.read()
+    return read_data
+
+
 def test_HTTP_bad_response_error():
     msg = echo_client.start_client("""
             Hello!
@@ -48,14 +55,7 @@ def test_HTTP_has_root():
             """)
     okay_response = "HTTP/1.1 200 OK\r\n"
     headers = "Content-Type: text/html\r\n"
-    body = """
-    <h1>webroot</h1>
-    <ul>
-        <li>images</li>
-        <li>a_web_page.html</li>
-        <li>sample.txt</li>
-    </ul>
-        """
+    body = "<h1>webroot</h1><ul><li>a_web_page.html</li><li>images</li><li>make_time.py</li><li>sample.txt</li></ul>"
     response = "{}{}{}\r\n".format(okay_response, headers, body)
     assert msg == response
 
@@ -66,23 +66,7 @@ def test_HTTP_returns_webpage():
             """)
     okay_response = "HTTP/1.1 200 OK\r\n"
     headers = "Content-Type: text/html\r\n"
-    body = os.path('webroot/a_web_page')
+
+    body = read_file_data('webroot/a_web_page')
     response = "{}{}{}\r\n".format(okay_response, headers, body)
     assert msg == response
-
-
-def test_HTTP_returns_dynamic_error():
-    error_response = "HTTP/1.1 400 ERROR\r\n"
-    headers = "Content-Type: text/plain\r\n"
-    body = "ERROR 400, BAD REQUEST\r\n"
-    response = "{}{}{}".format(error_response, headers, body)
-
-    request_list = ["""
-            POST webroot HTTP/1.0\r\nHost: localhost:50001\r\n
-            """, """
-            GET webroot/non-thing HTTP/1.0\r\nHost: localhost:50001\r\n
-            """, """
-            GET webroot HTTP/500.0\r\nHost: localhost:50001\r\n
-            """]
-    for req in request_list:
-        assert echo_client(req) != response
