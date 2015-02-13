@@ -74,11 +74,12 @@ def check_for_errors(request):
 def resolve_uri(uri):
     if os.path.isdir(uri):
         return (generate_dir_html(uri), 'text/html')
-    return (read_file_data(uri), mimetypes(uri))
+    return (read_file_data(uri), mimetypes.guess_type(uri)[0])
 
 
 def read_file_data(uri):
-    with open(os.path(uri), 'r') as f:
+    read_data = ""
+    with open(uri, 'r') as f:
         read_data = f.read()
     return read_data
 

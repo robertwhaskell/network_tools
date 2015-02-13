@@ -3,7 +3,7 @@ import os
 
 
 def read_file_data(uri):
-    with open(os.path(uri), 'r') as f:
+    with open(uri, 'r') as f:
         read_data = f.read()
     return read_data
 
@@ -62,11 +62,13 @@ def test_HTTP_has_root():
 
 def test_HTTP_returns_webpage():
     msg = echo_client.start_client("""
-            GET webroot/a_web_page.html HTTP/1.0\r\nHost: localhost:50001\r\n
+            GET webroot/a_web_page.html HTTP/1.1\r\nHost: localhost:50001\r\n
             """)
     okay_response = "HTTP/1.1 200 OK\r\n"
     headers = "Content-Type: text/html\r\n"
 
-    body = read_file_data('webroot/a_web_page')
+    body = read_file_data('webroot/a_web_page.html')
     response = "{}{}{}\r\n".format(okay_response, headers, body)
+    print msg
+    print response
     assert msg == response
