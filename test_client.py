@@ -69,6 +69,4 @@ def test_HTTP_returns_webpage():
 
     body = read_file_data('webroot/a_web_page.html')
     response = "{}{}{}\r\n".format(okay_response, headers, body)
-    print msg
-    print response
     assert msg == response
