@@ -12,7 +12,6 @@ def echo(socket, address):
             if data:
                 message += data
             else:
-                print message
                 socket.sendall(parse_request(message))
                 socket.close()
                 break
