@@ -1,5 +1,4 @@
 import echo_client
-import os
 
 
 def read_file_data(uri):

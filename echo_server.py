@@ -24,10 +24,8 @@ def start_server():
                 if len(msg_part) < buffersize:
                     done = True
             response = parse_request(message)
-            try:
+            if response:
                 conn.sendall(response)
-            except TypeError:
-                conn.sendall(response_error('400', 'BAD REQUEST'))
             conn.close()
     except:
         server_socket.close()
