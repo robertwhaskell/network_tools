@@ -1,4 +1,6 @@
 import socket
+import os
+import mimetypes
 
 BUFFERSIZE = 8
 
@@ -93,6 +95,27 @@ def get_response(message):
         response = response_error('400', 'BAD REQUEST')
     return response
 
+
+def resolve_uri(uri):
+    if os.path.isdir(uri):
+        return (generate_dir_html(uri), 'text/html')
+    return (read_file_data(uri), mimetypes.guess_type(uri)[0])
+
+
+def read_file_data(uri):
+    read_data = ""
+    with open(uri, 'r') as f:
+        read_data = f.read()
+    return read_data
+
+
+def generate_dir_html(uri):
+    dirname = "<h1>{}</h1>".format(uri)
+    items_in_dir = "<ul>"
+    for item in os.listdir(uri):
+        items_in_dir = "{}<li>{}</li>".format(items_in_dir, item)
+    items_in_dir = "{}</ul>".format(items_in_dir)
+    return "{}{}".format(dirname, items_in_dir)
 
 if __name__ == '__main__':
     print start_server()
