@@ -73,7 +73,10 @@ def response_error(error_num, error_msg):
 
 
 def parse_request(request):
-    req_list = request.split()
+    try:
+        req_list = request.splitlines()[0].split(' ')
+    except IndexError:
+        raise HTTPIvalidRequest('invalid request')
     if len(req_list) != 3:
         raise HTTPIvalidRequest('request needs exactly 3 parts: GET, uri, protocol')
     if req_list[0] != 'GET':

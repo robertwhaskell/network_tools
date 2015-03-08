@@ -67,11 +67,11 @@ def test_error_response_bad_method():
 
 
 def test_with_client_bad_protocol():
-    assert start_client("GET test HTTP/1.2") == "HTTP/1.1 505 ERROR\r\nContent-Type: text/plain\r\n\r\nERROR 505, PROTOCOL NOT SUPPORTED\r\n"
+    assert start_client("GET test HTTP/1.2\r\nhost:www.fakesite.com") == "HTTP/1.1 505 ERROR\r\nContent-Type: text/plain\r\n\r\nERROR 505, PROTOCOL NOT SUPPORTED\r\n"
 
 
 def test_with_client_bad_method():
-    assert start_client("PUT test HTTP/1.1") == "HTTP/1.1 405 ERROR\r\nContent-Type: text/plain\r\n\r\nERROR 405, METHOD NOT ALLOWED\r\n"
+    assert start_client("PUT test HTTP/1.1\r\nhost:www.fakesite.com") == "HTTP/1.1 405 ERROR\r\nContent-Type: text/plain\r\n\r\nERROR 405, METHOD NOT ALLOWED\r\n"
 
 
 def test_with_client_bad_request():
