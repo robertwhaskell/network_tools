@@ -1,6 +1,6 @@
 from echo_client import start_client
 import pytest
-from echo_server import response_ok, response_error, parse_request, get_response, HTTPIvalidRequest, HTTPMethodNotAllowed, HTTPProtocolNotAccepted
+from echo_server import *
 
 
 def test_response_okay():
@@ -76,3 +76,46 @@ def test_with_client_bad_method():
 
 def test_with_client_bad_request():
     assert start_client("") == "HTTP/1.1 400 ERROR\r\nContent-Type: text/plain\r\n\r\nERROR 400, BAD REQUEST\r\n"
+
+
+def test_resolve_uri():
+    assert resolve_uri('webroot') == (
+        '<h1>webroot</h1><ul><li>a_web_page.html</li><li>images</li><li>make_time.py</li><li>sample.txt</li></ul>', 
+        'text/html'
+        )
+
+
+def test_resolve_uri_with_bad_uri():
+    with pytest.raises(IOError):
+        resolve_uri("this is a bad uri")
+
+
+def test_read_file_data_txt():
+    assert read_file_data('webroot/a_web_page.html') == """<!DOCTYPE html>
+<html>
+<body>
+
+<h1>North Carolina</h1>
+
+<p>A fine place to spend a week learning web programming!</p>
+
+</body>
+</html>
+
+"""
+
+
+def test_generate_dir_html():
+    assert generate_dir_html('webroot') == '<h1>webroot</h1><ul><li>a_web_page.html</li><li>images</li><li>make_time.py</li><li>sample.txt</li></ul>'
+
+
+def test_generate_dir_html_nested_dir():
+    assert generate_dir_html('webroot/images') == '<h1>webroot/images</h1><ul><li>JPEG_example.jpg</li><li>sample_1.png</li><li>Sample_Scene_Balls.jpg</li></ul>'
+
+
+
+
+
+
+
+
