@@ -113,7 +113,20 @@ def test_generate_dir_html_nested_dir():
     assert generate_dir_html('webroot/images') == '<h1>webroot/images</h1><ul><li>JPEG_example.jpg</li><li>sample_1.png</li><li>Sample_Scene_Balls.jpg</li></ul>'
 
 
+def test_with_client_webroot_request():
+    assert start_client("GET webroot HTTP/1.1") == "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>webroot</h1><ul><li>a_web_page.html</li><li>images</li><li>make_time.py</li><li>sample.txt</li></ul>\r\n"
 
+
+def test_with_client_file_html_request():
+    assert start_client("GET webroot/a_web_page.html HTTP/1.1") == "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html>\n<html>\n<body>\n\n<h1>North Carolina</h1>\n\n<p>A fine place to spend a week learning web programming!</p>\n\n</body>\n</html>\n\n\r\n"
+
+
+def test_with_client_file_txt_request():
+    assert start_client("GET webroot/sample.txt HTTP/1.1") == "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nThis is a very simple text file.\nJust to show that we can server it up.\nIt is three lines long.\r\n"
+
+
+def test_with_client_file_py_request(): 
+    assert start_client("GET webroot/make_time.py HTTP/1.1") == 'HTTP/1.1 200 OK\r\nContent-Type: text/x-python\r\n\r\n#!/usr/bin/env python\n\n"""\nmake_time.py\n\nsimple script that returns and HTML page with the current time\n"""\n\nimport datetime\n\ntime_str = datetime.datetime.now().isoformat()\n\nhtml = """\n<http>\n<body>\n<h2> The time is: </h2>\n<p> %s <p>\n</body>\n</http>\n"""% time_str\n\nprint html'
 
 
 
