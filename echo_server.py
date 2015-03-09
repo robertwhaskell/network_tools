@@ -59,9 +59,9 @@ def start_server():
         raise
 
 
-def response_ok(content_type):
+def response_ok(content_type, content_length=0):
     okay_response = "HTTP/1.1 200 OK\r\n"
-    headers = "Content-Type: {}\r\n\r\n".format(content_type)
+    headers = "Content-Type: {}\nContent-Length: {}\r\n\r\n".format(content_type, content_length)
     return "{}{}".format(okay_response, headers)
 
 
@@ -89,7 +89,10 @@ def parse_request(request):
 def get_response(message):
     try:
         resolved_uri = resolve_uri(parse_request(message))
-        response = "{}{}\r\n".format(response_ok(resolved_uri[0]), resolved_uri[1])
+        response = "{}{}\r\n".format(
+            response_ok(resolved_uri[0], len(resolved_uri[1])),
+            resolved_uri[1]
+            )
     except HTTPMethodNotAllowed:
         response = response_error('405', 'METHOD NOT ALLOWED')
     except HTTPProtocolNotAccepted:
@@ -99,6 +102,7 @@ def get_response(message):
     except IOError:
         response = response_error('400', 'BAD REQUEST')
     return response
+
 
 def resolve_uri(uri):
     if os.path.isdir(uri):
