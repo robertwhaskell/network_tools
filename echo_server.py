@@ -59,9 +59,9 @@ def start_server():
         raise
 
 
-def response_ok():
+def response_ok(content_type):
     okay_response = "HTTP/1.1 200 OK\r\n"
-    headers = "Content-Type: text/plain\r\n\r\n"
+    headers = "Content-Type: {}\r\n\r\n".format(content_type)
     return "{}{}".format(okay_response, headers)
 
 
@@ -88,21 +88,22 @@ def parse_request(request):
 
 def get_response(message):
     try:
-        uri = parse_request(message)
-        response = "{}{}\r\n".format(response_ok(), uri)
+        resolved_uri = resolve_uri(parse_request(message))
+        response = "{}{}\r\n".format(response_ok(resolved_uri[0]), resolved_uri[1])
     except HTTPMethodNotAllowed:
         response = response_error('405', 'METHOD NOT ALLOWED')
     except HTTPProtocolNotAccepted:
         response = response_error('505', 'PROTOCOL NOT SUPPORTED')
     except HTTPIvalidRequest:
         response = response_error('400', 'BAD REQUEST')
+    except IOError:
+        response = response_error('400', 'BAD REQUEST')
     return response
-
 
 def resolve_uri(uri):
     if os.path.isdir(uri):
-        return (generate_dir_html(uri), 'text/html')
-    return (read_file_data(uri), mimetypes.guess_type(uri)[0])
+        return ('text/html', generate_dir_html(uri))
+    return (mimetypes.guess_type(uri)[0], read_file_data(uri))
 
 
 def read_file_data(uri):
