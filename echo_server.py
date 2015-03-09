@@ -100,7 +100,7 @@ def get_response(message):
     except HTTPIvalidRequest:
         response = response_error('400', 'BAD REQUEST')
     except IOError:
-        response = response_error('400', 'BAD REQUEST')
+        response = response_error('404', 'FILE NOT FOUND')
     return response
 
 
