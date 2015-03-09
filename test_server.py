@@ -58,10 +58,6 @@ def test_get_response_bad_request():
     assert get_response("") == "HTTP/1.1 400 ERROR\r\nContent-Type: text/plain\r\n\r\nERROR 400, BAD REQUEST\r\n"
 
 
-# def test_echo_response():
-#     assert start_client('GET test HTTP/1.1') == "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ntest\r\n"
-
-
 def test_error_response_bad_method():
     assert start_client("PUT test HTTP/1.1") == "HTTP/1.1 405 ERROR\r\nContent-Type: text/plain\r\n\r\nERROR 405, METHOD NOT ALLOWED\r\n"
 
@@ -78,10 +74,17 @@ def test_with_client_bad_request():
     assert start_client("") == "HTTP/1.1 400 ERROR\r\nContent-Type: text/plain\r\n\r\nERROR 400, BAD REQUEST\r\n"
 
 
-def test_resolve_uri():
+def test_resolve_uri_with_dir():
     assert resolve_uri('webroot') == (
-        '<h1>webroot</h1><ul><li>a_web_page.html</li><li>images</li><li>make_time.py</li><li>sample.txt</li></ul>', 
-        'text/html'
+        'text/html',
+        '<h1>webroot</h1><ul><li>a_web_page.html</li><li>images</li><li>make_time.py</li><li>sample.txt</li></ul>'
+        )
+
+
+def test_resolve_uri_with_text():
+    assert resolve_uri('webroot/sample.txt') == (
+        'text/plain',
+        'This is a very simple text file.\nJust to show that we can server it up.\nIt is three lines long.\n'
         )
 
 
@@ -118,19 +121,12 @@ def test_with_client_webroot_request():
 
 
 def test_with_client_file_html_request():
-    print "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html>\n<html>\n<body>\n\n<h1>North Carolina</h1>\n\n<p>A fine place to spend a week learning web programming!</p>\n\n</body>\n</html>\n\n\r\n"
-    print start_client("GET webroot/a_web_page.html HTTP/1.1")
     assert start_client("GET webroot/a_web_page.html HTTP/1.1") == "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html>\n<html>\n<body>\n\n<h1>North Carolina</h1>\n\n<p>A fine place to spend a week learning web programming!</p>\n\n</body>\n</html>\n\n\r\n"
 
 
 def test_with_client_file_txt_request():
-    assert start_client("GET webroot/sample.txt HTTP/1.1") == "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nThis is a very simple text file.\nJust to show that we can server it up.\nIt is three lines long.\r\n"
+    assert start_client("GET webroot/sample.txt HTTP/1.1") == "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nThis is a very simple text file.\nJust to show that we can server it up.\nIt is three lines long.\n\r\n"
 
 
 def test_with_client_file_py_request():
-    assert start_client("GET webroot/make_time.py HTTP/1.1") == 'HTTP/1.1 200 OK\r\nContent-Type: text/x-python\r\n\r\n#!/usr/bin/env python\n\n"""\nmake_time.py\n\nsimple script that returns and HTML page with the current time\n"""\n\nimport datetime\n\ntime_str = datetime.datetime.now().isoformat()\n\nhtml = """\n<http>\n<body>\n<h2> The time is: </h2>\n<p> %s <p>\n</body>\n</http>\n"""% time_str\n\nprint html'
-
-
-
-
-
+    assert start_client("GET webroot/make_time.py HTTP/1.1") == 'HTTP/1.1 200 OK\r\nContent-Type: text/x-python\r\n\r\n#!/usr/bin/env python\n\n"""\nmake_time.py\n\nsimple script that returns and HTML page with the current time\n"""\n\nimport datetime\n\ntime_str = datetime.datetime.now().isoformat()\n\nhtml = """\n<http>\n<body>\n<h2> The time is: </h2>\n<p> %s <p>\n</body>\n</http>\n"""% time_str\n\nprint html\n\n\n\n\r\n'
